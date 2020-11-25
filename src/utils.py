@@ -46,19 +46,19 @@ def not_null_columns(columns, table):
     Return:
         not_null_columns (str): joined not null columns
     """
-    if table == "for_hire": 
-    	columns.remove("SR_Flag")
-    	not_null_columns = ",".join(columns)
+    if table == "for_hire":
+        columns.remove("SR_Flag")
+        not_null_columns = ",".join(columns)
 
     elif table == "hv_for_hire":
-    	columns.remove("SR_Flag")
-    	not_null_columns = ",".join(columns)
+        columns.remove("SR_Flag")
+        not_null_columns = ",".join(columns)
 
     elif table == "green_taxi":
-    	columns.remove("ehail_fee")
-    	not_null_columns = ",".join(columns)
+        columns.remove("ehail_fee")
+        not_null_columns = ",".join(columns)
 
-    elif table =="yellow_taxi":
+    elif table == "yellow_taxi":
         not_null_columns = ",".join(columns)
 
     return not_null_columns
@@ -93,11 +93,3 @@ def chunk_to_rows(chunk, execution_date):
     rows = rows[1:]
     rows = csv_date_append(rows, execution_date)
     return rows
-
-
-
-
-
-
-
-
