@@ -4,6 +4,7 @@ TAXI_ETL_TASKS = [
     {
         "name": "yellow_taxi",
         "csv_url": "https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_{year_month}.csv",
+        "tmp_upsert_query": sql_vars.INSERT_INTO_YELLOW_TAXI_TMP,
         "production_upsert_query": sql_vars.YELLOW_TAXI_UPSERT_QUERY,
         "columns": [
             "csv_date",
@@ -30,6 +31,7 @@ TAXI_ETL_TASKS = [
     {
         "name": "green_taxi",
         "csv_url": "https://s3.amazonaws.com/nyc-tlc/trip+data/green_tripdata_{year_month}.csv",
+        "tmp_upsert_query": sql_vars.INSERT_INTO_GREEN_TAXI_TMP,
         "production_upsert_query": sql_vars.GREEN_TAXI_UPSERT_QUERY,
         "columns": [
             "csv_date",
@@ -58,6 +60,7 @@ TAXI_ETL_TASKS = [
     {
         "name": "for_hire",
         "csv_url": "https://nyc-tlc.s3.amazonaws.com/trip+data/fhv_tripdata_{year_month}.csv",
+        "tmp_upsert_query": sql_vars.INSERT_INTO_FOR_HIRE_TAXI_TMP,
         "production_upsert_query": sql_vars.FOR_HIRE_TAXI_UPSERT_QUERY,
         "columns": [
             "csv_date",
@@ -72,6 +75,7 @@ TAXI_ETL_TASKS = [
     {
         "name": "hv_for_hire",
         "csv_url": "https://nyc-tlc.s3.amazonaws.com/trip+data/fhvhv_tripdata_{year_month}.csv",
+        "tmp_upsert_query": sql_vars.INSERT_INTO_HV_FOR_HIRE_TAXI_TMP,
         "production_upsert_query": sql_vars.HIGH_VOLUME_FOR_HIRE_TAXI_UPSERT_QUERY,
         "columns": [
             "csv_date",
@@ -87,10 +91,10 @@ TAXI_ETL_TASKS = [
 ]
 
 # DATE RANGE YEAR-MONTH
-START_DATE = "2020-01"
-END_DATE = "2020-01"
+START_DATE = "2019-01"
+END_DATE = "2020-06"
 
-# MYSQL CONN
+# mysql con
 HOST = "%"
 USER = "remoteuser"
 PASSWORD = "Taxitask@stats"

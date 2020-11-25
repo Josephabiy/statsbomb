@@ -193,6 +193,85 @@ HIGH_VOLUME_FOR_HIRE_TAXI_CREATE_TABLE_QUERY = """
 	)
 """
 
+# INSERT INTO TMP
+INSERT_INTO_YELLOW_TAXI_TMP = """
+	INSERT IGNORE INTO tmp.yellow_taxi (
+		`csv_date`,
+	    `VendorID`,
+	    `tpep_pickup_datetime`,
+	    `tpep_dropoff_datetime`,
+	    `passenger_count`,
+	    `trip_distance`,
+	    `RatecodeID`,
+	    `store_and_fwd_flag`,
+	    `PULocationID`,
+	    `DOLocationID`,
+	    `payment_type`,
+	    `fare_amount`,
+	    `extra`,
+	    `mta_tax`,
+	    `tip_amount`,
+	    `tolls_amount`,
+	    `improvement_surcharge`,
+	    `total_amount`,
+	    `congestion_surcharge`	)
+    VALUES
+		{values}
+"""
+
+INSERT_INTO_GREEN_TAXI_TMP = """
+	INSERT IGNORE INTO tmp.green_taxi (
+		`csv_date`,
+        `VendorID`,
+        `lpep_pickup_datetime`,
+        `lpep_dropoff_datetime`,
+        `store_and_fwd_flag`,
+        `RatecodeID`,
+        `PULocationID`,
+        `DOLocationID`,
+        `passenger_count`,
+        `trip_distance`,
+        `fare_amount`,
+        `extra`,
+        `mta_tax`,
+        `tip_amount`,
+        `tolls_amount`,
+        `ehail_fee`,
+        `improvement_surcharge`,
+        `total_amount`,
+        `payment_type`,
+        `trip_type`,
+        `congestion_surcharge`)
+    VALUES
+		{values}
+"""
+
+INSERT_INTO_FOR_HIRE_TAXI_TMP = """
+	INSERT IGNORE INTO tmp.for_hire (
+		`csv_date`,
+        `dispatching_base_num`,
+        `pickup_datetime`,
+        `dropoff_datetime`,
+        `PULocationID`,
+        `DOLocationID`,
+        `SR_Flag`)
+    VALUES
+		{values}
+"""
+
+INSERT_INTO_HV_FOR_HIRE_TAXI_TMP = """
+	INSERT IGNORE INTO tmp.hv_for_hire (
+		`csv_date`,
+        `hvfhs_license_num`,
+        `dispatching_base_num`,
+        `pickup_datetime`,
+        `dropoff_datetime`,
+        `PULocationID`,
+        `DOLocationID`,
+        `SR_Flag`)
+    VALUES
+		{values}
+"""
 
 # UPSERT TO PRODUCTION QUERIES
 YELLOW_TAXI_UPSERT_QUERY = """
