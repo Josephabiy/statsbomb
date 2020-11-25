@@ -147,7 +147,7 @@ GREEN_TAXI_CREATE_TABLE_QUERY = """
 		`mta_tax` decimal NOT NULL,
 		`tip_amount` decimal NOT NULL,
 		`tolls_amount` decimal NOT NULL,
-		`ehail_fee` decimal NOT NULL,
+		`ehail_fee` decimal NULL DEFAULT 0,
 		`improvement_surcharge` decimal NOT NULL,
 		`total_amount` decimal NOT NULL,
 		`payment_type` int(10) NOT NULL,
@@ -487,7 +487,7 @@ COUNT_UPSERT_BADROWS_QUERY = """
 	            "{csv_date}" AS csv_date,
 	            COUNT(*) AS dropped_rows  
 	      FROM
-	            tmp.yellow_taxi
+	            tmp.{name}
 	      WHERE
 	            CONCAT({columns}) is NULL
 	ON DUPLICATE KEY UPDATE

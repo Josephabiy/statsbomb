@@ -1,6 +1,6 @@
 """ Interact with files in S3"""
 import requests
-
+import logging
 
 def pull(csv_url):
     """
@@ -14,10 +14,11 @@ def pull(csv_url):
     try:
         req = requests.get(csv_url)
         url_content = req.content.decode("utf-8").split("\n")
-        print(url_content[1])
         rows = [(row.strip()).split(",") for row in url_content]
-        rows = rows[0:]
+        rows = rows[1:]
+        logging.info(f" Sample pulled row from AWS: {rows[0]}")
         return rows
+
     except Exception as e:
         raise ValueError(
             f"An error has occurred whilst pulling '{csv_url}' from bucket AWS"

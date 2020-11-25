@@ -22,7 +22,11 @@ def rows_to_csv(tempfile, rows):
 
 def not_null_columns(columns, table):
     if table == "hv_for_hire":
-        not_null_columns = ",".join(columns[:-1])
+    	columns.remove("SR_Flag")
+    	not_null_columns = ",".join(columns)
+    elif table == "green_taxi":
+    	columns.remove("ehail_fee")
+    	not_null_columns = ",".join(columns)
     else:
         not_null_columns = ",".join(columns)
     return not_null_columns
