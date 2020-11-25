@@ -51,7 +51,7 @@ def not_null_columns(columns, table):
     	not_null_columns = ",".join(columns)
 
     elif table == "hv_for_hire":
-    	columns.remove("SR_Flag")
+      columns.remove("SR_Flag")
     	not_null_columns = ",".join(columns)
 
     elif table == "green_taxi":
