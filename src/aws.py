@@ -1,4 +1,3 @@
-""" Interact with files in S3"""
 import requests
 import logging
 
@@ -7,9 +6,9 @@ def pull(csv_url):
     Pulls Object from specified S3 bucket and removes header row
 
     Args:
-            bucket (str): GCS Bucket
-            obj_name (str):  Object name
+        csv_url (str): S3 bucket URL 
     Return:
+        rows (list): returns a list of rows
     """
     try:
         req = requests.get(csv_url)
