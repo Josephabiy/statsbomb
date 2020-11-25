@@ -4,8 +4,22 @@ import pandas as pd
 import aws
 import utils
 import my_sql
-from sql_vars import TRUNCATE_TMP_QUERY, NULLS_TO_BADROWS_QUERY, COUNT_UPSERT_BADROWS_QUERY, REMOVE_NULLS_QUERY
-from config import TAXI_ETL_TASKS, USER, PASSWORD, TMP_DB, PROD_DB, PORT, START_DATE, END_DATE
+from sql_vars import (
+    TRUNCATE_TMP_QUERY,
+    NULLS_TO_BADROWS_QUERY,
+    COUNT_UPSERT_BADROWS_QUERY,
+    REMOVE_NULLS_QUERY,
+)
+from config import (
+    TAXI_ETL_TASKS,
+    USER,
+    PASSWORD,
+    TMP_DB,
+    PROD_DB,
+    PORT,
+    START_DATE,
+    END_DATE,
+)
 from tempfile import NamedTemporaryFile
 
 logging.basicConfig(level=logging.INFO)
@@ -14,13 +28,12 @@ if __name__ == "__main__":
 
     execution_dates = utils.date_range_by_month(START_DATE, END_DATE)
     for execution_date in execution_dates:
-    
+
         for task in TAXI_ETL_TASKS:
             csv_url = task["csv_url"]
             table = task["name"]
             production_upsert_query = task["production_upsert_query"]
             columns = task["columns"]
-            pk_constraint = task["pk_constraint"]
 
             logging.info(f" Executing pipeline: '{table}' for date '{execution_date}'")
 
@@ -75,12 +88,13 @@ if __name__ == "__main__":
                 USER,
                 PASSWORD,
                 TMP_DB,
-            )            
-
+            )
 
             logging.info(f" Removing Null rows from 'tmp.{table}")
             my_sql.execute_query(
-                REMOVE_NULLS_QUERY.format(table=table, db=TMP_DB, columns=not_null_columns),
+                REMOVE_NULLS_QUERY.format(
+                    table=table, db=TMP_DB, columns=not_null_columns
+                ),
                 USER,
                 PASSWORD,
                 TMP_DB,

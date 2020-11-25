@@ -2,15 +2,16 @@ import csv
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-def date_range_by_month(start_y_m, end_y_m):
-	start_date = datetime.strptime(start_y_m, '%Y-%m')
-	end_date = datetime.strptime(end_y_m, '%Y-%m')
 
-	date_range = []
-	while start_date <= end_date:
-	    date_range.append(start_date.strftime('%Y-%m'))
-	    start_date += relativedelta(months=1)
-	return date_range
+def date_range_by_month(start_y_m, end_y_m):
+    start_date = datetime.strptime(start_y_m, "%Y-%m")
+    end_date = datetime.strptime(end_y_m, "%Y-%m")
+
+    date_range = []
+    while start_date <= end_date:
+        date_range.append(start_date.strftime("%Y-%m"))
+        start_date += relativedelta(months=1)
+    return date_range
 
 
 def rows_to_csv(tempfile, rows):
