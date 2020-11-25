@@ -13,6 +13,7 @@ setup(
         "pymysql",
         "sqlalchemy",
         "cryptography",
+        "pytest",
     ],
     packages=find_packages(),
 )
