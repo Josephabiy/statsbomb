@@ -1,6 +1,11 @@
 import csv
+import requests
+import logging
+import pandas as pd
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from tempfile import NamedTemporaryFile
+import my_sql
 
 
 def date_range_by_month(start_y_m, end_y_m):
@@ -93,3 +98,43 @@ def chunk_to_rows(chunk, execution_date):
     rows = rows[1:]
     rows = csv_date_append(rows, execution_date)
     return rows
+
+
+def s3_to_db(csv_url, execution_date, columns, table, user, password, port, db):
+    """
+    Ingests raw file from S3 in chunks of 10MB, applies transformation and returns rows.
+        Rows are written to a tempfile which is loaded into a dataframe and appended
+        to the relevant tmp table.
+
+    Args:
+        csv_url (url): S3 URL to raw file
+        execution_date (str): execution date 'yyyy-mm' format
+        columns (list): list of table columns
+        table (str): name of table
+        user (str): User name
+        password (str): Password
+        port (str): Port
+        db (str): Database
+    """
+    try:
+        with requests.get(csv_url.format(year_month=execution_date), stream=True) as r:
+
+            for chunk in r.iter_content(chunk_size=10000000):
+                rows = chunk_to_rows(chunk, execution_date)
+
+                with NamedTemporaryFile("w", suffix=".csv", delete=True) as csvfile:
+                    rows_to_csv(csvfile, rows)
+
+                    logging.info(" Reading CSV chunk to pandas dataframe")
+
+                    dataframe = pd.read_csv(
+                        csvfile.name, sep=",", names=columns, low_memory=False
+                    )
+
+                    logging.info(f" Loading dataframe chunk to 'tmp.{table}'")
+                    my_sql.dataframe_to_db(dataframe, user, password, port, db, table)
+                    csvfile.close()
+    except Exception as e:
+        raise ValueError(
+            f"An error '{e}' has occurred whilst pulling '{csv_url}' from S3 bucket"
+        )
