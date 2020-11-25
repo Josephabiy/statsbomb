@@ -1,11 +1,12 @@
 import sql_vars
 
-ETL_TASKS = [
+TAXI_ETL_TASKS = [
     {
         "name": "yellow_taxi",
-        "csv_url": "https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_2020-01.csv",  # add date format {year_month}
+        "csv_url": "https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_{year_month}.csv",
         "production_upsert_query": sql_vars.YELLOW_TAXI_UPSERT_QUERY,
         "columns": [
+            "csv_date",
             "VendorID",
             "tpep_pickup_datetime",
             "tpep_dropoff_datetime",
@@ -26,6 +27,7 @@ ETL_TASKS = [
             "congestion_surcharge",
         ],
         "pk_constraint": [
+            "csv_date",
             "tpep_pickup_datetime",
             "tpep_dropoff_datetime",
             "PULocationID",
@@ -35,8 +37,9 @@ ETL_TASKS = [
     },
     # {
     #     "name": "green_taxi",
-    #     "csv_url": "https://s3.amazonaws.com/nyc-tlc/trip+data/green_tripdata_2020-01.csv",  # add date format {year_month}
+    #     "csv_url": "https://s3.amazonaws.com/nyc-tlc/trip+data/green_tripdata_{year_month}.csv",
     #     "columns": [
+    #         "csv_date",
     #         "VendorID",
     #         "lpep_pickup_datetime",
     #         "lpep_dropoff_datetime",
@@ -61,8 +64,9 @@ ETL_TASKS = [
     # },
     # {
     #     "name": "for_hire",
-    #     "csv_url": "https://nyc-tlc.s3.amazonaws.com/trip+data/fhv_tripdata_2020-01.csv",  # add date format {year_month}
+    #     "csv_url": "https://nyc-tlc.s3.amazonaws.com/trip+data/fhv_tripdata_{year_month}.csv",
     #     "columns": [
+    #         "csv_date",
     #         "dispatching_base_num",
     #         "pickup_datetime",
     #         "dropoff_datetime",
@@ -73,8 +77,9 @@ ETL_TASKS = [
     # },
     # {
     #     "name": "hv_for_hire",
-    #     "csv_url": "https://nyc-tlc.s3.amazonaws.com/trip+data/fhvhv_tripdata_2020-01.csv",  # add date format {year_month}
+    #     "csv_url": "https://nyc-tlc.s3.amazonaws.com/trip+data/fhvhv_tripdata_{year_month}.csv",
     #     "columns": [
+    #         "csv_date",
     #         "hvfhs_license_num",
     #         "dispatching_base_num",
     #         "pickup_datetime",
@@ -87,16 +92,16 @@ ETL_TASKS = [
 ]
 
 # DATE RANGE YEAR-MONTH
-DATE_RANGE = ""
+START_DATE = "2020-01"
+END_DATE = "2020-01"
 
-# MYSQL CONN
+MYSQL CONN
 HOST = "%"
 USER = "remoteuser"
 PASSWORD = "Taxitask@stats"
 TMP_DB = "tmp"
 PROD_DB = "trips"
 PORT = 3306
-
 
 
 # original local 

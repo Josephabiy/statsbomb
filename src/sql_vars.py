@@ -1,6 +1,7 @@
 # CREATE TMP TABLE QUERIES
 YELLOW_TAXI_TMP_CREATE_TABLE_QUERY = """
 	CREATE TABLE tmp.yellow_taxi (
+		`csv_date` varchar(10),
 	    `VendorID` int(10),
 	    `tpep_pickup_datetime` datetime,
 	    `tpep_dropoff_datetime` datetime,
@@ -24,6 +25,7 @@ YELLOW_TAXI_TMP_CREATE_TABLE_QUERY = """
 
 GREEN_TAXI_TMP_CREATE_TABLE_QUERY = """
 	CREATE TABLE tmp.green_taxi (
+		`csv_date` varchar(10),
 		`VendorID` int(10),
 		`lpep_pickup_datetime` datetime,
 		`lpep_dropoff_datetime` datetime,
@@ -49,6 +51,7 @@ GREEN_TAXI_TMP_CREATE_TABLE_QUERY = """
 
 FOR_HIRE_TAXI_TMP_CREATE_TABLE_QUERY = """
 	CREATE TABLE tmp.for_hire (
+		`csv_date` varchar(10),
 		`dispatching_base_num` varchar(200),
 		`pickup_datetime` datetime,
 		`dropoff_datetime` datetime,
@@ -60,6 +63,7 @@ FOR_HIRE_TAXI_TMP_CREATE_TABLE_QUERY = """
 
 HIGH_VOLUME_FOR_HIRE_TAXI_TMP_CREATE_TABLE_QUERY = """
 	CREATE TABLE tmp.hv_for_hire (
+		`csv_date` varchar(10),
 		`hvfhs_license_num` varchar(200),
 		`dispatching_base_num` varchar(200),
 		`pickup_datetime` datetime,
@@ -103,6 +107,7 @@ TRIP_TYPE_DIMENSION_CREATE_TABLE_QUERY = """
 # CREATE FACT TABLE QUERIES
 YELLOW_TAXI_CREATE_TABLE_QUERY = """
 	CREATE TABLE trips.yellow_taxi (
+		`csv_date` varchar(10) NOT NULL,
 	    `VendorID` int(10) NOT NULL,
 	    `tpep_pickup_datetime` datetime NOT NULL,
 	    `tpep_dropoff_datetime` datetime NOT NULL,
@@ -121,12 +126,13 @@ YELLOW_TAXI_CREATE_TABLE_QUERY = """
 	    `improvement_surcharge` decimal NOT NULL,
 	    `total_amount` decimal NOT NULL,
 	    `congestion_surcharge` decimal NOT NULL,
-	PRIMARY KEY (`tpep_pickup_datetime`, `tpep_dropoff_datetime`, `PULocationID`, `DOLocationID`, `VendorID`)
+	PRIMARY KEY (`csv_date`, `tpep_pickup_datetime`, `tpep_dropoff_datetime`, `PULocationID`, `DOLocationID`, `VendorID`)
     )
 """
 
 GREEN_TAXI_CREATE_TABLE_QUERY = """
 	CREATE TABLE trips.green_taxi (
+		`csv_date` varchar(10) NOT NULL,
 		`VendorID` int(10) NOT NULL,
 		`lpep_pickup_datetime` datetime NOT NULL,
 		`lpep_dropoff_datetime` datetime NOT NULL,
@@ -147,24 +153,26 @@ GREEN_TAXI_CREATE_TABLE_QUERY = """
 		`payment_type` int(10) NOT NULL,
 		`trip_type` int(10) NOT NULL,
 		`congestion_surcharge` decimal NOT NULL,
-	PRIMARY KEY (`lpep_pickup_datetime`, `lpep_dropoff_datetime`, `PULocationID`, `DOLocationID`, `VendorID`)
+	PRIMARY KEY (`csv_date`, `lpep_pickup_datetime`, `lpep_dropoff_datetime`, `PULocationID`, `DOLocationID`, `VendorID`)
 	)
 """
 
 FOR_HIRE_TAXI_CREATE_TABLE_QUERY = """
 	CREATE TABLE trips.for_hire (
+		`csv_date` varchar(10) NOT NULL,
 		`dispatching_base_num` varchar(200) NOT NULL,
 		`pickup_datetime` datetime NOT NULL,
 		`dropoff_datetime` datetime NOT NULL,
 		`PULocationID` int(10) NOT NULL,
 		`DOLocationID` int(10) NOT NULL,
 		`SR_Flag` tinyint(1),
-	PRIMARY KEY (`pickup_datetime`, `dropoff_datetime`, `PULocationID`, `DOLocationID`, `dispatching_base_num`)
+	PRIMARY KEY (`csv_date`, `pickup_datetime`, `dropoff_datetime`, `PULocationID`, `DOLocationID`, `dispatching_base_num`)
 	)
 """
 
 HIGH_VOLUME_FOR_HIRE_TAXI_CREATE_TABLE_QUERY = """
 	CREATE TABLE trips.hv_for_hire (
+		`csv_date` varchar(10) NOT NULL,
 		`hvfhs_license_num` varchar(200) NOT NULL,
 		`dispatching_base_num` varchar(200) NOT NULL,
 		`pickup_datetime` datetime NOT NULL,
@@ -172,7 +180,7 @@ HIGH_VOLUME_FOR_HIRE_TAXI_CREATE_TABLE_QUERY = """
 		`PULocationID` int(10) NOT NULL,
 		`DOLocationID` int(10) NOT NULL,
 		`SR_Flag` tinyint(1),
-	PRIMARY KEY (`pickup_datetime`, `dropoff_datetime`, `PULocationID`, `DOLocationID`, `hvfhs_license_num`)
+	PRIMARY KEY (`csv_date`, `pickup_datetime`, `dropoff_datetime`, `PULocationID`, `DOLocationID`, `hvfhs_license_num`)
 	)
 """
 
@@ -181,6 +189,7 @@ HIGH_VOLUME_FOR_HIRE_TAXI_CREATE_TABLE_QUERY = """
 YELLOW_TAXI_UPSERT_QUERY = """
     INSERT INTO
         trips.yellow_taxi (
+		`csv_date`,
 	    `VendorID`,
 	    `tpep_pickup_datetime`,
 	    `tpep_dropoff_datetime`,
@@ -205,6 +214,7 @@ YELLOW_TAXI_UPSERT_QUERY = """
 	    FROM
         tmp.yellow_taxi temp
     ON DUPLICATE KEY UPDATE
+		`csv_date` = temp.csv_date,
 	    `VendorID` = temp.VendorID,
 	    `tpep_pickup_datetime` = temp.tpep_pickup_datetime,
 	    `tpep_dropoff_datetime` = temp.tpep_dropoff_datetime,
@@ -228,6 +238,7 @@ YELLOW_TAXI_UPSERT_QUERY = """
 GREEN_TAXI_UPSERT_QUERY = """
     INSERT INTO
         trips.green_taxi (
+		`csv_date`,
         `VendorID`,
         `lpep_pickup_datetime`,
         `lpep_dropoff_datetime`,
@@ -254,6 +265,7 @@ GREEN_TAXI_UPSERT_QUERY = """
 	    FROM
         tmp.green_taxi temp
     ON DUPLICATE KEY UPDATE
+		`csv_date` = temp.csv_date,
         `VendorID` = temp.VendorID,
         `lpep_pickup_datetime` = temp.lpep_pickup_datetime,
         `lpep_dropoff_datetime` = temp.lpep_dropoff_datetime,
@@ -279,6 +291,7 @@ GREEN_TAXI_UPSERT_QUERY = """
 FOR_HIRE_TAXI_UPSERT_QUERY = """
     INSERT INTO
         trips.for_hire (
+			`csv_date`,
             `dispatching_base_num`,
             `pickup_datetime`,
             `dropoff_datetime`,
@@ -291,6 +304,7 @@ FOR_HIRE_TAXI_UPSERT_QUERY = """
 	    FROM
         tmp.for_hire temp
     ON DUPLICATE KEY UPDATE
+		`csv_date` = temp.csv_date,
 	    `dispatching_base_num` = temp.dispatching_base_num,
 	    `pickup_datetime` = temp.pickup_datetime,
 	    `dropoff_datetime` = temp.dropoff_datetime,
@@ -303,6 +317,7 @@ FOR_HIRE_TAXI_UPSERT_QUERY = """
 HIGH_VOLUME_FOR_HIRE_TAXI_UPSERT_QUERY = """
     INSERT INTO
         trips.hv_for_hire (
+			`csv_date`,
             `hvfhs_license_num`,
             `dispatching_base_num`,
             `pickup_datetime`,
@@ -316,6 +331,7 @@ HIGH_VOLUME_FOR_HIRE_TAXI_UPSERT_QUERY = """
 	    FROM
         tmp.hv_for_hire temp
     ON DUPLICATE KEY UPDATE
+		`csv_date` = temp.csv_date,
         `hvfhs_license_num` = temp.hvfhs_license_num,
         `dispatching_base_num` = temp.dispatching_base_num,
         `pickup_datetime` = temp.pickup_datetime,
@@ -328,6 +344,7 @@ HIGH_VOLUME_FOR_HIRE_TAXI_UPSERT_QUERY = """
 # CREATE BADROWS TABLES QUERIES
 YELLOW_TAXI_BADROWS_CREATE_TABLE_QUERY = """
 	CREATE TABLE badrows.yellow_taxi (
+		`csv_date` varchar(10),
 	    `VendorID` int(10),
 	    `tpep_pickup_datetime` datetime,
 	    `tpep_dropoff_datetime` datetime,
@@ -352,6 +369,7 @@ YELLOW_TAXI_BADROWS_CREATE_TABLE_QUERY = """
 
 GREEN_TAXI_BADROWS_CREATE_TABLE_QUERY = """
 	CREATE TABLE badrows.green_taxi (
+		`csv_date` varchar(10),
 		`VendorID` int(10),
 		`lpep_pickup_datetime` datetime,
 		`lpep_dropoff_datetime` datetime,
@@ -378,6 +396,7 @@ GREEN_TAXI_BADROWS_CREATE_TABLE_QUERY = """
 
 FOR_HIRE_TAXI_BADROWS_CREATE_TABLE_QUERY = """
 	CREATE TABLE badrows.for_hire (
+		`csv_date` varchar(10),
 		`dispatching_base_num` varchar(200),
 		`pickup_datetime` datetime,
 		`dropoff_datetime` datetime,
@@ -390,6 +409,7 @@ FOR_HIRE_TAXI_BADROWS_CREATE_TABLE_QUERY = """
 
 HIGH_VOLUME_FOR_HIRE_TAXI_BADROWS_CREATE_TABLE_QUERY = """
 	CREATE TABLE badrows.hv_for_hire (
+		`csv_date` varchar(10),
 		`hvfhs_license_num` varchar(200),
 		`dispatching_base_num` varchar(200),
 		`pickup_datetime` datetime,
@@ -399,6 +419,15 @@ HIGH_VOLUME_FOR_HIRE_TAXI_BADROWS_CREATE_TABLE_QUERY = """
 		`SR_Flag` tinyint(1),
 		`insertion_date` datetime
 	)
+"""
+
+DROPPED_ROWS_BADROWS_CREATE_TABLE_QUERY = """
+	CREATE TABLE badrows.dropped_rows (
+	    `taxi` varchar(200) NOT NULL,
+		`csv_date` varchar(10) NOT NULL,
+	    `dropped_rows` int(10) NOT NULL,
+	PRIMARY KEY (`taxi`, `csv_date`)
+    )
 """
 
 # DIMENSION INSERT QUERY
@@ -447,4 +476,25 @@ TRUNCATE_TMP_QUERY = "TRUNCATE TABLE {db}.{table}"
 
 NULLS_TO_BADROWS_QUERY = "INSERT INTO badrows.{table} SELECT *, NOW() FROM {db}.{table} WHERE CONCAT({columns}) is NULL"
 
+COUNT_UPSERT_BADROWS_QUERY = """
+	INSERT INTO badrows.dropped_rows(
+	      `taxi`,
+	      `csv_date`,
+	      `dropped_rows`
+	      )
+	      SELECT
+	            "{name}" AS taxi,
+	            "{csv_date}" AS csv_date,
+	            COUNT(*) AS dropped_rows  
+	      FROM
+	            tmp.yellow_taxi
+	      WHERE
+	            CONCAT({columns}) is NULL
+	ON DUPLICATE KEY UPDATE
+	      `taxi` = taxi,
+	      `csv_date` = csv_date,
+	      `dropped_rows` = dropped_rows
+"""
+
 REMOVE_NULLS_QUERY = "DELETE FROM {db}.{table} WHERE CONCAT({columns}) is NULL"
+
