@@ -76,3 +76,28 @@ def csv_date_append(rows, execution_date):
     """
     [row.insert(0, execution_date) for row in rows]
     return rows
+
+
+def chunk_to_rows(chunk, execution_date):
+    """
+    Converts chunk to list, removes header and appends csv_date to row
+
+    Args:
+        chunk (rows): list of rows
+        execution_date (str): execution date 'yyyy-mm' format
+    Return:
+        rows (rows): list of rows
+    """
+    url_content = chunk.decode("utf-8").split("\n")
+    rows = [(row.strip()).split(",") for row in url_content]
+    rows = rows[1:]
+    rows = csv_date_append(rows, execution_date)
+    return rows
+
+
+
+
+
+
+
+

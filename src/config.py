@@ -97,3 +97,11 @@ PASSWORD = "Taxitask@stats"
 TMP_DB = "tmp"
 PROD_DB = "trips"
 PORT = 3306
+
+# original local
+# HOST = "%"
+# USER = "newuser"
+# PASSWORD = "Taxitask@stats"
+# TMP_DB = "tmp"
+# PROD_DB = "trips"
+# PORT = 3306
