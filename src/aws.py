@@ -14,8 +14,9 @@ def pull(csv_url):
     try:
         req = requests.get(csv_url)
         url_content = req.content.decode("utf-8").split("\n")
-        rows = [row.split(",") for row in url_content]
-        rows = rows[1:]
+        print(url_content[1])
+        rows = [(row.strip()).split(",") for row in url_content]
+        rows = rows[0:]
         return rows
     except Exception as e:
         raise ValueError(
