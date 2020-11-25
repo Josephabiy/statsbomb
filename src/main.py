@@ -1,6 +1,4 @@
 import logging
-import requests
-import pandas as pd
 import utils
 import my_sql
 from sql_vars import (
@@ -19,7 +17,6 @@ from config import (
     START_DATE,
     END_DATE,
 )
-from tempfile import NamedTemporaryFile
 
 logging.basicConfig(level=logging.INFO)
 
@@ -44,32 +41,9 @@ if __name__ == "__main__":
                 TMP_DB,
             )
 
-            with requests.get(
-                csv_url.format(year_month=execution_date), stream=True
-            ) as r:
-                r.raise_for_status()
-
-                for chunk in r.iter_content(chunk_size=10000000):  # 10MB chunks
-                    rows = utils.chunk_to_rows(chunk, execution_date)
-
-                    with NamedTemporaryFile("w", suffix=".csv", delete=True) as csvfile:
-                        utils.rows_to_csv(csvfile, rows)
-
-                        logging.info(" Reading CSV to pandas dataframe")
-                        dataframe = pd.read_csv(
-                            csvfile.name, sep=",", names=columns, low_memory=False
-                        )
-
-                        logging.info(f" Loading dataframe to 'tmp.{table}")
-                        my_sql.dataframe_to_db(
-                            dataframe,
-                            USER,
-                            PASSWORD,
-                            PORT,
-                            TMP_DB,
-                            table,
-                        )
-                        csvfile.close()
+            utils.s3_to_db(
+                csv_url, execution_date, columns, table, USER, PASSWORD, PORT, TMP_DB
+            )
 
             not_null_columns = utils.not_null_columns(columns, table)
 
