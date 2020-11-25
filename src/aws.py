@@ -1,12 +1,13 @@
 import requests
 import logging
 
+
 def pull(csv_url):
     """
     Pulls Object from specified S3 bucket and removes header row
 
     Args:
-        csv_url (str): S3 bucket URL 
+        csv_url (str): S3 bucket URL
     Return:
         rows (list): returns a list of rows
     """
