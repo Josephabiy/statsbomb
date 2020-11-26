@@ -32,11 +32,10 @@ def execute_query(query, user, password, db):
         db (str): Database
     """
     con = connect_to_db(user, password, db)
-
     try:
         with con.cursor() as cursor:
             cursor.execute(query)
-        con.commit()
+            con.commit()
     finally:
         con.close()
 

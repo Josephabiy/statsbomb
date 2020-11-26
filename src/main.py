@@ -34,7 +34,8 @@ if __name__ == "__main__":
             table = task["name"]
             tmp_upsert_query = task["tmp_upsert_query"]
             production_upsert_query = task["production_upsert_query"]
-            columns = task["columns"]
+            schema = task["schema"]
+            columns = [*schema]
 
             logging.info(f" Executing pipeline: '{table}' for date '{execution_date}'")
 
@@ -49,13 +50,12 @@ if __name__ == "__main__":
             utils.s3_to_db(
                 csv_url,
                 execution_date,
-                columns,
+                schema,
                 table,
                 USER,
                 PASSWORD,
                 PORT,
                 TMP_DB,
-                tmp_upsert_query,
             )
 
             not_null_columns = utils.not_null_columns(columns, table)
