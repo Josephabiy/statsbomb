@@ -13,7 +13,7 @@ INSTRUCTIONS:
 - SSH into Virtual machine
 - Ensure Python3 is installed
 - Create a Python3.6 virtual environment and activate
-- Clone the 'timeout-task' repository locally through the terminal via HTTPS or SSH e.g:
+- Clone the 'statsbomb' repository locally through the terminal via HTTPS or SSH e.g:
   'git clone https://github.com/Josephabiy/statsbomb.git'
 - Navigate into the package:
   'cd statsbomb'
