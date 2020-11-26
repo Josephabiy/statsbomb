@@ -46,3 +46,4 @@ TO DO:
 - Improve Exception handling to catch specific errors
 - Apply specific data validy checks
 - Move logging to separate config file
+- Take into account voided trips when setting PK constraint e.g no pickup time
