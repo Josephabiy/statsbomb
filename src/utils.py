@@ -41,33 +41,21 @@ def rows_to_csv(tempfile, rows):
     tempfile.flush()
 
 
-def not_null_columns(columns, table):
+def not_null_columns(columns, nulls, table):
     """
     Joins not null columns from a table
 
     Args:
         columns (list): list of table columns
+        nulls (list): list of columns which can contain nulls
         table (str): name of table
     Return:
         not_null_columns (str): joined not null columns
     """
 
     try:
-        if table == "for_hire":
-            columns.remove("SR_Flag")
-            not_null_columns = ",".join(columns)
-
-        elif table == "hv_for_hire":
-            columns.remove("SR_Flag")
-            not_null_columns = ",".join(columns)
-
-        elif table == "green_taxi":
-            columns.remove("ehail_fee")
-            not_null_columns = ",".join(columns)
-
-        elif table == "yellow_taxi":
-            not_null_columns = ",".join(columns)
-
+        [columns.remove(null) for null in nulls]
+        not_null_columns = ",".join(columns)
         return not_null_columns
 
     except Exception as e:
