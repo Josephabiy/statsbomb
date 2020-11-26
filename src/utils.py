@@ -78,7 +78,6 @@ def not_null_columns(columns, table):
         return not_null_columns
 
 
-
 def csv_date_append(rows, execution_date):
     """
     Inserts the execution date to a list of rows as the first element
@@ -121,12 +120,19 @@ def create_and_clean_dataframe(csvfile, schema):
         dataframe (dataframe): transformed pandas dataframe
     """
     dataframe = pd.read_csv(
-        csvfile.name, sep=",", names=[*schema], low_memory=False, error_bad_lines=False, warn_bad_lines=True
+        csvfile.name,
+        sep=",",
+        names=[*schema],
+        low_memory=False,
+        error_bad_lines=False,
+        warn_bad_lines=True,
     )
 
-    numeric_cols = [column for column, dtype in schema.items() if dtype=="numeric"]
-    dataframe[numeric_cols] = dataframe[numeric_cols].apply(pd.to_numeric, errors='coerce')
-  
+    numeric_cols = [column for column, dtype in schema.items() if dtype == "numeric"]
+    dataframe[numeric_cols] = dataframe[numeric_cols].apply(
+        pd.to_numeric, errors="coerce"
+    )
+
     return dataframe
 
 
@@ -145,13 +151,13 @@ def s3_to_db(csv_url, execution_date, schema, table, user, password, port, db):
         port (str): Port
         db (str): Database
     """
-    try: 
+    try:
         with requests.get(csv_url.format(year_month=execution_date), stream=True) as r:
 
             for chunk in r.iter_content(chunk_size=100000000):
                 rows = chunk_to_rows(chunk, execution_date)
 
-                try: 
+                try:
                     with NamedTemporaryFile("w", suffix=".csv") as csvfile:
                         rows_to_csv(csvfile, rows)
 
@@ -168,12 +174,9 @@ def s3_to_db(csv_url, execution_date, schema, table, user, password, port, db):
                             table,
                         )
 
-
                 except Exception as e:
                     logging.info(
                         f"An error '{e}' has occurred whilst loading chunk to DB"
                     )
     except Exception as e:
-        logging.info(
-            f"An error '{e}' has occurred whilst pulling '{csv_url}' from S3"
-        )
+        logging.info(f"An error '{e}' has occurred whilst pulling '{csv_url}' from S3")

@@ -4,10 +4,9 @@ TAXI_ETL_TASKS = [
     {
         "name": "yellow_taxi",
         "csv_url": "https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_{year_month}.csv",
-        "tmp_upsert_query": sql_vars.INSERT_INTO_YELLOW_TAXI_TMP,
         "production_upsert_query": sql_vars.YELLOW_TAXI_UPSERT_QUERY,
         "schema": {
-            "csv_date" : "string",
+            "csv_date": "string",
             "VendorID": "numeric",
             "tpep_pickup_datetime": "string",
             "tpep_dropoff_datetime": "string",
@@ -17,12 +16,12 @@ TAXI_ETL_TASKS = [
             "store_and_fwd_flag": "string",
             "PULocationID": "numeric",
             "DOLocationID": "numeric",
-            "payment_type" :"numeric",
+            "payment_type": "numeric",
             "fare_amount": "numeric",
             "extra": "numeric",
             "mta_tax": "numeric",
-            "tip_amount":"numeric",
-            "tolls_amount" :"numeric",
+            "tip_amount": "numeric",
+            "tolls_amount": "numeric",
             "improvement_surcharge": "numeric",
             "total_amount": "numeric",
             "congestion_surcharge": "numeric",
@@ -31,7 +30,6 @@ TAXI_ETL_TASKS = [
     {
         "name": "green_taxi",
         "csv_url": "https://s3.amazonaws.com/nyc-tlc/trip+data/green_tripdata_{year_month}.csv",
-        "tmp_upsert_query": sql_vars.INSERT_INTO_GREEN_TAXI_TMP,
         "production_upsert_query": sql_vars.GREEN_TAXI_UPSERT_QUERY,
         "schema": {
             "csv_date": "string",
@@ -60,7 +58,6 @@ TAXI_ETL_TASKS = [
     {
         "name": "for_hire",
         "csv_url": "https://nyc-tlc.s3.amazonaws.com/trip+data/fhv_tripdata_{year_month}.csv",
-        "tmp_upsert_query": sql_vars.INSERT_INTO_FOR_HIRE_TAXI_TMP,
         "production_upsert_query": sql_vars.FOR_HIRE_TAXI_UPSERT_QUERY,
         "schema": {
             "csv_date": "string",
@@ -75,7 +72,6 @@ TAXI_ETL_TASKS = [
     {
         "name": "hv_for_hire",
         "csv_url": "https://nyc-tlc.s3.amazonaws.com/trip+data/fhvhv_tripdata_{year_month}.csv",
-        "tmp_upsert_query": sql_vars.INSERT_INTO_HV_FOR_HIRE_TAXI_TMP,
         "production_upsert_query": sql_vars.HIGH_VOLUME_FOR_HIRE_TAXI_UPSERT_QUERY,
         "schema": {
             "csv_date": "string",
@@ -85,7 +81,7 @@ TAXI_ETL_TASKS = [
             "dropoff_datetime": "string",
             "PULocationID": "numeric",
             "DOLocationID": "numeric",
-            "SR_Flag": "numeric"
+            "SR_Flag": "numeric",
         },
     },
 ]

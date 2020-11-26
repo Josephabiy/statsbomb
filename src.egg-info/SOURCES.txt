@@ -1,7 +1,6 @@
 README.md
 setup.py
 src/__init__.py
-src/aws.py
 src/config.py
 src/main.py
 src/my_sql.py
@@ -12,3 +11,6 @@ src.egg-info/SOURCES.txt
 src.egg-info/dependency_links.txt
 src.egg-info/requires.txt
 src.egg-info/top_level.txt
+tests/__init__.py
+tests/unit/__init__.py
+tests/unit/date_range_test.py

@@ -6,10 +6,6 @@ from sql_vars import (
     NULLS_TO_BADROWS_QUERY,
     COUNT_UPSERT_BADROWS_QUERY,
     REMOVE_NULLS_QUERY,
-    INSERT_INTO_YELLOW_TAXI_TMP,
-    INSERT_INTO_GREEN_TAXI_TMP,
-    INSERT_INTO_FOR_HIRE_TAXI_TMP,
-    INSERT_INTO_HV_FOR_HIRE_TAXI_TMP,
 )
 from config import (
     TAXI_ETL_TASKS,
@@ -32,7 +28,6 @@ if __name__ == "__main__":
         for task in TAXI_ETL_TASKS:
             csv_url = task["csv_url"]
             table = task["name"]
-            tmp_upsert_query = task["tmp_upsert_query"]
             production_upsert_query = task["production_upsert_query"]
             schema = task["schema"]
             columns = [*schema]
