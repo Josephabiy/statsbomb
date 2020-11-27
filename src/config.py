@@ -1,7 +1,7 @@
 import sql_vars
 
 TAXI_ETL_TASK = {
-    "name": "yellow_taxi",
+    "name": "taxi",
     "csv_url": "https://s3.amazonaws.com/nyc-tlc/trip+data/yellow_tripdata_{year_month}.csv",
     "production_upsert_query": sql_vars.YELLOW_TAXI_UPSERT_QUERY,
     "schema": {
@@ -31,8 +31,6 @@ TAXI_ETL_TASK = {
         "trip_distance",
         "RatecodeID",
         "store_and_fwd_flag",
-        "PULocationID",
-        "DOLocationID",
         "payment_type",
         "fare_amount",
         "extra",

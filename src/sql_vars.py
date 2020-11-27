@@ -1,6 +1,6 @@
 # CREATE TMP TABLE QUERIES
 YELLOW_TAXI_TMP_CREATE_TABLE_QUERY = """
-	CREATE TABLE tmp.yellow_taxi (
+	CREATE TABLE tmp.taxi (
 		`csv_date` varchar(10),
 	    `VendorID` int(10),
 	    `tpep_pickup_datetime` varchar(200),
@@ -69,17 +69,17 @@ ZONES_DIMENSION_CREATE_TABLE_QUERY = """
 
 # CREATE FACT TABLE QUERIES
 YELLOW_TAXI_CREATE_TABLE_QUERY = """
-	CREATE TABLE trips.yellow_taxi (
+	CREATE TABLE trips.taxi (
 		`csv_date` varchar(10) NOT NULL,
 	    `VendorID` int(10),
 	    `tpep_pickup_datetime` datetime NOT NULL,
 	    `tpep_dropoff_datetime` datetime NOT NULL,
 	    `passenger_count` int(10),
 	    `trip_distance` decimal,
-	    `RatecodeID` int(10),
+	    `RatecodeID` int(10) NOT NULL,
 	    `store_and_fwd_flag` varchar(200),
-	    `PULocationID` int(10),
-	    `DOLocationID` int(10),
+	    `PULocationID` int(10) NOT NULL,
+	    `DOLocationID` int(10) NOT NULL,
 	    `payment_type` int(10),
 	    `fare_amount` decimal,
 	    `extra` decimal,
@@ -89,14 +89,14 @@ YELLOW_TAXI_CREATE_TABLE_QUERY = """
 	    `improvement_surcharge` decimal,
 	    `total_amount` decimal,
 	    `congestion_surcharge` decimal,
-	PRIMARY KEY (`csv_date`, `tpep_pickup_datetime`, `tpep_dropoff_datetime`)
+	PRIMARY KEY (`csv_date`, `tpep_pickup_datetime`, `tpep_dropoff_datetime`, `PULocationID`, `DOLocationID`)
     )
 """
 
 # UPSERT TO PRODUCTION QUERIES
 YELLOW_TAXI_UPSERT_QUERY = """
     INSERT INTO
-        trips.yellow_taxi (
+        trips.taxi (
 		`csv_date`,
 	    `VendorID`,
 	    `tpep_pickup_datetime`,
@@ -120,7 +120,7 @@ YELLOW_TAXI_UPSERT_QUERY = """
 	    SELECT
 		    *
 	    FROM
-        tmp.yellow_taxi temp
+        tmp.taxi temp
     ON DUPLICATE KEY UPDATE
 		`csv_date` = temp.csv_date,
 	    `VendorID` = temp.VendorID,
@@ -145,7 +145,7 @@ YELLOW_TAXI_UPSERT_QUERY = """
 
 # CREATE BADROWS TABLES QUERIES
 YELLOW_TAXI_BADROWS_CREATE_TABLE_QUERY = """
-	CREATE TABLE badrows.yellow_taxi (
+	CREATE TABLE badrows.taxi (
 		`csv_date` varchar(10),
 	    `VendorID` int(10),
 	    `tpep_pickup_datetime` varchar(200),
@@ -505,7 +505,7 @@ COUNT_UPSERT_BADROWS_QUERY = """
 	      `dropped_rows`
 	      )
 	      SELECT
-	            "{name}" AS taxi,
+	            "yellow_taxi" AS taxi,
 	            "{csv_date}" AS csv_date,
 	            COUNT(*) AS dropped_rows  
 	      FROM
