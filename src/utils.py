@@ -239,7 +239,7 @@ def s3_to_db(
                     logging.info(
                         f"An error '{e}' has occurred whilst loading chunk to DB"
                     )
-                time.sleep(1)
+                time.sleep(120)
 
     except Exception as e:
         logging.info(f"An error '{e}' has occurred whilst pulling '{csv_url}' from S3")
