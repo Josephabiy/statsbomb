@@ -21,7 +21,7 @@ INSTRUCTIONS:
   'python setup.py develop'
 - Install MySQL
 - Update the MySQL connection variables as per your requirements in the config.py file
-- Copy the create the table commands specified in the sql_vars.py file
+- Copy the create table commands specified in the sql_vars.py file
 - Copy the Dimension data insert statments specified in sql_vars.py file
 - Execute the programme, run the following in the terminal:
   'python src/main.py'
