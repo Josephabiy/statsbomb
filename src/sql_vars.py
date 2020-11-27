@@ -28,28 +28,32 @@ YELLOW_TAXI_TMP_CREATE_TABLE_QUERY = """
 VENDOR_DIMENSION_CREATE_TABLE_QUERY = """
 	CREATE TABLE trips.vendors (
 	    `VendorID` int(10),
-	    `vendor` varchar(200)
+	    `vendor` varchar(200),
+	PRIMARY KEY (`VendorID`)
 	)
 """
 
 PAYMENT_DIMENSION_CREATE_TABLE_QUERY = """
 	CREATE TABLE trips.payment_type (
 	    `payment_type_id` int(10),
-	    `payment_type` varchar(200)
+	    `payment_type` varchar(200),
+	PRIMARY KEY (`payment_type_id`)
 	)
 """
 
 RATECODE_DIMENSION_CREATE_TABLE_QUERY = """
 	CREATE TABLE trips.ratecode (
 	    `RateCodeID` int(10),
-	    `rate_code` varchar(200)
+	    `rate_code` varchar(200),
+	PRIMARY KEY (`RateCodeID`)
 	)
 """
 
 TRIP_TYPE_DIMENSION_CREATE_TABLE_QUERY = """
 	CREATE TABLE trips.trip_type (
 	    `Trip_type` int(10),
-	    `trip_name` varchar(200)
+	    `trip_name` varchar(200),
+	PRIMARY KEY (`Trip_type`)
 	)
 """
 
@@ -58,7 +62,8 @@ ZONES_DIMENSION_CREATE_TABLE_QUERY = """
 	    `LocationID` int(10),
 	    `Borough` varchar(200),
 	    `Zone` varchar(200),
-	    `service_zone` varchar(200)
+	    `service_zone` varchar(200),
+	PRIMARY KEY (`LocationID`)
 	)
 """
 
