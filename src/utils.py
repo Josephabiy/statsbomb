@@ -6,6 +6,12 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from tempfile import NamedTemporaryFile
 from src import my_sql
+from sql_vars import (
+    TRUNCATE_TMP_QUERY,
+    NULLS_TO_BADROWS_QUERY,
+    COUNT_UPSERT_BADROWS_QUERY,
+    REMOVE_NULLS_QUERY,
+)
 
 
 def date_range_by_month(start_y_m, end_y_m):
@@ -124,24 +130,40 @@ def create_and_clean_dataframe(csvfile, schema):
     return dataframe
 
 
-def s3_to_db(csv_url, execution_date, schema, table, user, password, port, db):
+def s3_to_db(
+    csv_url,
+    execution_date,
+    schema,
+    not_null_columns,
+    table,
+    user,
+    password,
+    port,
+    db,
+    production_upsert_query,
+):
     """
     Ingests raw file from S3 in chunks of 100MB, applies transformation and returns rows.
-        Rows are written to temp file and appended to the relevant tmp table.
+        Rows are written to temp file where tmp table is truncated before load. Dirty lines are
+        written to badrows.taxi and the count is written to badrows.dropped_rows. The dirty lines
+        are removed from the tmp table and they are upserted to production.
 
     Args:
         csv_url (url): S3 URL to raw file
         execution_date (str): execution date 'yyyy-mm' format
         schema (dict): schema of table columns
+        not_null_columns (str): joined not null columns
         table (str): name of table
         user (str): User name
         password (str): Password
         port (str): Port
         db (str): Database
+        production_upsert_query (sql): Upsert from tmp to production table
     """
     try:
         with requests.get(csv_url.format(year_month=execution_date), stream=True) as r:
 
+            chunk_count = 1
             for chunk in r.iter_content(chunk_size=100000000):
                 rows = chunk_to_rows(chunk, execution_date)
 
@@ -149,10 +171,20 @@ def s3_to_db(csv_url, execution_date, schema, table, user, password, port, db):
                     with NamedTemporaryFile("w", suffix=".csv") as csvfile:
                         rows_to_csv(csvfile, rows)
 
+                        logging.info(" Truncating tmp table to load")
+                        my_sql.execute_query(
+                            TRUNCATE_TMP_QUERY.format(db=db, table=table),
+                            user,
+                            password,
+                            db,
+                        )
+
                         logging.info(" Reading CSV to pandas dataframe")
                         dataframe = create_and_clean_dataframe(csvfile, schema)
 
-                        logging.info(f" Loading dataframe chunk to 'tmp.{table}")
+                        logging.info(
+                            f" Loading dataframe chunk '{chunk_count}' to 'tmp.{table}"
+                        )
                         my_sql.dataframe_to_db(
                             dataframe,
                             user,
@@ -161,6 +193,46 @@ def s3_to_db(csv_url, execution_date, schema, table, user, password, port, db):
                             db,
                             table,
                         )
+
+                        logging.info(f" Writing Null rows to 'badrows.{table}'")
+                        my_sql.execute_query(
+                            NULLS_TO_BADROWS_QUERY.format(
+                                table=table, db=db, columns=not_null_columns
+                            ),
+                            user,
+                            password,
+                            db,
+                        )
+
+                        logging.info(
+                            f" Count Null rows and write to 'badrows.dropped_rows'"
+                        )
+                        my_sql.execute_query(
+                            COUNT_UPSERT_BADROWS_QUERY.format(
+                                name=table,
+                                csv_date=execution_date,
+                                columns=not_null_columns,
+                            ),
+                            user,
+                            password,
+                            db,
+                        )
+
+                        logging.info(f" Removing Null rows from 'tmp.{table}'")
+                        my_sql.execute_query(
+                            REMOVE_NULLS_QUERY.format(
+                                table=table, db=db, columns=not_null_columns
+                            ),
+                            user,
+                            password,
+                            db,
+                        )
+
+                        logging.info(f" Upserting from tmp table trips.{table}")
+                        my_sql.execute_query(
+                            production_upsert_query, user, password, db
+                        )
+                        chunk_count += 1
 
                 except Exception as e:
                     logging.info(
