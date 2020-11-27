@@ -162,7 +162,7 @@ def s3_to_db(
         production_upsert_query (sql): Upsert from tmp to production table
     """
     try:
-        with requests.get(csv_url.format(year_month=execution_date), stream=True) as r:
+        with requests.get(csv_url.format(year_month=execution_date), stream=True, timeout=None) as r:
 
             chunk_count = 1
             for chunk in r.iter_content(chunk_size=100000000):

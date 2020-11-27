@@ -6,7 +6,7 @@ setup(
     author="Joseph Abiy",
     version="0.0.1",
     install_requires=[
-        "requests==2.22.0",
+        "requests==2.25.0",
         "black",
         "pytest",
         "pandas",
