@@ -1,6 +1,7 @@
 import csv
 import requests
 import logging
+import time
 import pandas as pd
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
@@ -183,7 +184,7 @@ def s3_to_db(
                         dataframe = create_and_clean_dataframe(csvfile, schema)
 
                         logging.info(
-                            f" Loading dataframe chunk '{chunk_count}' to 'tmp.{table}"
+                            f" Loading dataframe chunk '{chunk_count}' to 'tmp.{table}'"
                         )
                         my_sql.dataframe_to_db(
                             dataframe,
@@ -238,5 +239,7 @@ def s3_to_db(
                     logging.info(
                         f"An error '{e}' has occurred whilst loading chunk to DB"
                     )
+                time.sleep(1)
+
     except Exception as e:
         logging.info(f"An error '{e}' has occurred whilst pulling '{csv_url}' from S3")
