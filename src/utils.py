@@ -72,21 +72,6 @@ def not_null_columns(columns, nulls, table):
         not_null_columns = ",".join(columns)
         return not_null_columns
 
-
-def csv_date_append(rows, execution_date):
-    """
-    Inserts the execution date to a list of rows as the first element
-
-    Args:
-        rows (rows): list of rows
-        execution_date (str): execution date 'yyyy-mm' format
-    Return:
-        rows (rows): list of rows
-    """
-    [row.insert(0, execution_date) for row in rows]
-    return rows
-
-
 def chunk_to_rows(chunk, execution_date):
     """
     Converts chunk to list, removes header and appends csv_date to row
@@ -97,12 +82,16 @@ def chunk_to_rows(chunk, execution_date):
     Return:
         rows (rows): list of rows
     """
+    logging.info(f" Converting response to rows")
     url_content = chunk.decode("utf-8").split("\n")
-    rows = [(row.strip()).split(",") for row in url_content]
-    rows = rows[1:]
-    rows = csv_date_append(rows, execution_date)
-    return rows
 
+    rows = []
+    for row in url_content:
+        row = (row.strip()).split(",")
+        row.insert(0, execution_date)
+        rows.append(row)
+    logging.info(f" Sample converted row: {rows[0]}")
+    return rows
 
 def create_and_clean_dataframe(csvfile, schema):
     """
@@ -144,7 +133,7 @@ def s3_to_db(
     production_upsert_query,
 ):
     """
-    Ingests raw file from S3 in chunks of 100MB, applies transformation and returns rows.
+    Ingests raw file from S3 in chunks of 2GB, applies transformation and returns rows.
         Rows are written to temp file where tmp table is truncated before load. Dirty lines are
         written to badrows.taxi and the count is written to badrows.dropped_rows. The dirty lines
         are removed from the tmp table and they are upserted to production.
@@ -162,10 +151,11 @@ def s3_to_db(
         production_upsert_query (sql): Upsert from tmp to production table
     """
     try:
-        with requests.get(csv_url.format(year_month=execution_date), stream=True, timeout=None) as r:
+        with requests.get(csv_url.format(year_month=execution_date)) as r:
 
             chunk_count = 1
-            for chunk in r.iter_content(chunk_size=100000000):
+            for chunk in r.iter_content(chunk_size=2000000000):
+                r.raise_for_status()
                 rows = chunk_to_rows(chunk, execution_date)
 
                 try:
@@ -239,7 +229,7 @@ def s3_to_db(
                     logging.info(
                         f"An error '{e}' has occurred whilst loading chunk to DB"
                     )
-                time.sleep(120)
+                time.sleep(60)
 
     except Exception as e:
         logging.info(f"An error '{e}' has occurred whilst pulling '{csv_url}' from S3")

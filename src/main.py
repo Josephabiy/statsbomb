@@ -15,16 +15,16 @@ logging.basicConfig(level=logging.INFO)
 
 if __name__ == "__main__":
 
+    csv_url = task["csv_url"]
+    table = task["name"]
+    production_upsert_query = task["production_upsert_query"]
+    schema = task["schema"]
+    nulls = task["nulls"]
+    columns = [*schema]
+    not_null_columns = utils.not_null_columns(columns, nulls, table)
+
     execution_dates = utils.date_range_by_month(START_DATE, END_DATE)
     for execution_date in execution_dates:
-
-        csv_url = task["csv_url"]
-        table = task["name"]
-        production_upsert_query = task["production_upsert_query"]
-        schema = task["schema"]
-        nulls = task["nulls"]
-        columns = [*schema]
-        not_null_columns = utils.not_null_columns(columns, nulls, table)
 
         logging.info(f" Executing pipeline: '{table}' for date '{execution_date}'")
 

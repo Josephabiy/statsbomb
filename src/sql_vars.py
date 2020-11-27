@@ -509,9 +509,9 @@ COUNT_UPSERT_BADROWS_QUERY = """
 	            "{csv_date}" AS csv_date,
 	            COUNT(*) AS dropped_rows  
 	      FROM
-	            tmp.{name}
+	            badrows.taxi
 	      WHERE
-	            CONCAT({columns}) is NULL
+	            csv_date = '{csv_date}'
 	ON DUPLICATE KEY UPDATE
 	      `taxi` = taxi,
 	      `csv_date` = csv_date,
