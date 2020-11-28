@@ -76,7 +76,7 @@ YELLOW_TAXI_CREATE_TABLE_QUERY = """
 	    `tpep_dropoff_datetime` datetime NOT NULL,
 	    `passenger_count` int(10),
 	    `trip_distance` decimal,
-	    `RatecodeID` int(10) NOT NULL,
+	    `RatecodeID` int(10),
 	    `store_and_fwd_flag` varchar(200),
 	    `PULocationID` int(10) NOT NULL,
 	    `DOLocationID` int(10) NOT NULL,
