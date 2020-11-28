@@ -90,7 +90,7 @@ def chunk_to_rows(chunk, execution_date):
         row = (row.strip()).split(",")
         row.insert(0, execution_date)
         rows.append(row)
-    logging.info(f" Sample converted row: {rows[0]}")
+    logging.info(f" Sample converted row: {rows[2]}")
     return rows
 
 def create_and_clean_dataframe(csvfile, schema):
@@ -133,7 +133,7 @@ def s3_to_db(
     production_upsert_query,
 ):
     """
-    Ingests raw file from S3 in chunks of 2GB, applies transformation and returns rows.
+    Ingests raw file from S3 in chunks of 100MB, applies transformation and returns rows.
         Rows are written to temp file where tmp table is truncated before load. Dirty lines are
         written to badrows.taxi and the count is written to badrows.dropped_rows. The dirty lines
         are removed from the tmp table and they are upserted to production.
@@ -154,9 +154,10 @@ def s3_to_db(
         with requests.get(csv_url.format(year_month=execution_date)) as r:
 
             chunk_count = 1
-            for chunk in r.iter_content(chunk_size=2000000000):
+            for chunk in r.iter_content(chunk_size=100000000):
                 r.raise_for_status()
                 rows = chunk_to_rows(chunk, execution_date)
+                rows = rows[1:]
 
                 try:
                     with NamedTemporaryFile("w", suffix=".csv") as csvfile:
@@ -169,6 +170,7 @@ def s3_to_db(
                             password,
                             db,
                         )
+                        time.sleep(60)
 
                         logging.info(" Reading CSV to pandas dataframe")
                         dataframe = create_and_clean_dataframe(csvfile, schema)
@@ -229,7 +231,6 @@ def s3_to_db(
                     logging.info(
                         f"An error '{e}' has occurred whilst loading chunk to DB"
                     )
-                time.sleep(60)
 
     except Exception as e:
         logging.info(f"An error '{e}' has occurred whilst pulling '{csv_url}' from S3")
